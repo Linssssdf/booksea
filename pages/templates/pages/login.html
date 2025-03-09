@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BookSea Library Management System">
+    <title>BookSea Library Management System</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #E6E6FA, #FFFACD);
+            color: black;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .top-left-logo {
+            position: absolute;
+            top: 70px;
+            left: 70px;
+            width: 200px;
+        }
+        .container {
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 60px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom:15px;
+        }
+        .form-group label {
+            flex:0 0 80px;
+            text-align:right;
+            margin-right: 10px;
+        }
+        .form-check {
+            text-align: left;
+        }
+        .form-control {
+            flex-grow: 1;
+            border-radius: 5px;
+        }
+        .btn-login {
+            width: 100%;
+            background-color: #2176C1;
+            color: white;
+            border-radius: 5px;
+        }
+        .btn-login:hover {
+            background-color: #185a9d;
+        }
+        .or-separator {
+            margin-top:10px;
+            font-weight:normal;
+            margin-bottom:10px;
+        }
+        .social-login {
+            display: flex;
+            justify-content: center; /* Horizontally center the buttons */
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .social-btn {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+        .facebook {
+            background: #3b5998;
+        }
+        .google {
+            background: #db4437;
+        }
+        .forgot-password {
+            text-align: center; /* Horizontally center the "Forgot password?" link */
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 左上角 Logo -->
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
+
+    <div class="container">
+        <!-- 标题 -->
+        <h2 class="headline">Please log in BookSea Library System</h2>
+
+        <!-- 登录表单 -->
+        <form method="POST">
+            {% csrf_token %}
+            <!-- Display form fields -->
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+                {% if form.username.errors %}
+                    <div class="error-message">
+                        {% for error in form.username.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                {% if form.password.errors %}
+                    <div class="error-message">
+                        {% for error in form.password.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Remember me checkbox -->
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                <label class="form-check-label" for="remember">Remember Me</label>
+            </div>
+
+            <button type="submit" class="btn btn-login mt-3">Login</button>
+
+            <!-- Forgot password link -->
+            <div class="forgot-password">
+                <p>Forgot password? <a href="{% url 'password_reset' %}">Reset it here.</a></p>
+            </div>
+        </form>
+
+        <!-- OR 分割线 -->
+        <p class="or-separator">--------------OR--------------</p>
+
+        <!-- Social login buttons -->
+        <div class="social-login">
+            <button class="social-btn facebook">Facebook</button>
+            <button class="social-btn google">Google</button>
+        </div>
+    </div>
+
+</body>
+</html>
