@@ -117,3 +117,15 @@ def logout(request):
         from django.contrib.auth.models import AnonymousUser
 
         request.user = AnonymousUser()
+
+def support(request):
+    return render(request, "pages/support.html")
+
+def news(request):
+    return render(request, "pages/news.html")
+
+def book_detail(request):
+    return render(request, "pages/book_detail.html")
+
+def account_setting(request):
+    return render(request, "pages/account_setting.html")

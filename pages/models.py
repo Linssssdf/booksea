@@ -48,7 +48,7 @@ class User(AbstractBaseUser):
 
     @property
     def is_staff(self):
-        return self.role in [User.UserRole.OPERATOR, User.UserRole.MANAGER]
+        return self.role in [User.UserRole.MANAGER]
 
     @property
     def is_superuser(self):

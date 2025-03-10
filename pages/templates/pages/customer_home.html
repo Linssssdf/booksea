@@ -1,10 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Library System - Customer Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Customer home">
+    <title>Customer home</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #E6E6FA, #FFFACD);
+            color: black;
+            position: relative;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .top-left-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .library-header {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .library-news {
+            margin-top: 30px;
+        }
+        .library-news h3 {
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+        .library-news ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .library-news li {
+            margin-bottom: 15px;
+        }
+        .library-news a {
+            font-weight: bold;
+            color: #2176C1;
+            text-decoration: none;
+        }
+        .library-news a:hover {
+            text-decoration: underline;
+        }
+        .top-nav {
+            text-align: right;
+        }
+        .top-nav a {
+            margin-left: 15px;
+            color: #2176C1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
 
+    <div class="container">
+        <div class="top-nav">
+            <a href="{% url 'account_setting' %}">Account</a>
+            <a href="{% url 'signout' %}">log out</a>
+            <a href="{% url 'support' %}">support & feedback</a>
+        </div>
+
+        <h1 class="library-header">WELCOME TO THE LIBRARY!</h1>
+        <p>The library provides a wealth of resources covering literature, history, science and technology, art, medicine and other fields to meet the needs of people of different ages and interests. Welcome to borrow books!</p>
+
+        <p><a href="{% url 'support' %}"><strong>Contact us</strong></a></p>
+
+        <div class="library-news">
+            <h3><a href="{% url 'news' %}">Library news</a></h3>
+            <ul>
+                <li>
+                    <a href="{% url 'book_detail' %}">1. New book recommendations</a>
+                    <p>New popular books from the Harry Potter series have been added.</p>
+                </li>
+                <li>
+                    <a href="#">2. Upcoming events</a>
+                    <p>Book club: A book discussion on the theme of "Literature and Society" will be held next Tuesday (February 13).</p>
+                </li>
+                <li>
+                    <a href="#">3. New features launched</a>
+                    <p>Self-service borrowing and returning book functions.</p>
+                </li>
+            </ul>
+        </div>
+    </div>
 </body>
 </html>

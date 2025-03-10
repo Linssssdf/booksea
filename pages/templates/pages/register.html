@@ -29,97 +29,100 @@
             width: 200px;
         }
         .container {
-            max-width: 700px;
+            max-width: 500px;
             background: rgba(255, 255, 255, 0.9);
-            padding: 60px;
+            padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
         .form-group {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom:15px;
+            justify-content: flex-start;
+            margin-bottom: 15px;
         }
         .form-group label {
-            flex:0 0 80px;
-            text-align:right;
+            flex: 0 0 100px;
+            text-align: right;
             margin-right: 10px;
-        }
-        .form-check {
-            text-align: left;
+            font-weight: bold;
         }
         .form-control {
             flex-grow: 1;
             border-radius: 5px;
+            padding: 10px;
+            width: 100%;
         }
         .btn-register {
             width: 100%;
             background-color: #2176C1;
             color: white;
             border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
         }
         .btn-register:hover {
             background-color: #185a9d;
-        }
-        .or-separator {
-            margin-top: 10px;
-            font-weight: normal;
-            margin-bottom: 10px;
-        }
-        .social-login {
-            display: flex;
-            justify-content: center; /* Horizontally center the buttons */
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .social-btn {
-            width: 48%;
-            padding: 10px;
-            border-radius: 5px;
-            color: white;
-            font-size: 14px;
-            border: none;
-            cursor: pointer;
         }
         .already-have-account {
             text-align: center;
             margin-top: 20px;
         }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
     </style>
+    <script>
+        function validateForm(event) {
+            var password = document.getElementById("id_password").value;
+            var errorDiv = document.getElementById("password-error");
+            if (password.length < 8) {
+                errorDiv.textContent = "Your password is too short. There is a security risk. Please re-enter it.";
+                event.preventDefault(); // 阻止表单提交
+            } else {
+                errorDiv.textContent = "";
+            }
+        }
+    </script>
 </head>
 <body>
-
+    <div class="header">
+        <div class="d-flex align-items-center position-relative">
+            <button class="btn btn-outline-light position-absolute start-0 btn-back" onclick="history.back()">Back</button>
+        </div>
+    </div>
     <!-- 左上角 Logo -->
     <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
 
     <div class="container">
-        <!-- 标题 -->
-        <h2 class="headline">Create Your Account</h2>
+        <h2 class="headline text-center">Create Your Account</h2>
 
-        <!-- 注册表单 -->
-        <form method="POST">
+        <!-- Django 注册表单 -->
+        <form method="POST" onsubmit="validateForm(event)">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" class="form-control" placeholder="Enter your username" required>
+                <label for="id_username">Username:</label>
+                <input type="text" id="id_username" name="username" class="form-control" placeholder="Enter your username" required>
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                <label for="id_email">Email:</label>
+                <input type="email" id="id_email" name="email" class="form-control" placeholder="Enter your email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                <label for="id_password">Password:</label>
+                <input type="password" id="id_password" name="password" class="form-control" placeholder="Enter your password" required>
+                <div id="password-error" class="error-message"></div>
             </div>
             <button type="submit" class="btn btn-register mt-3">Register</button>
-
-            <!-- Already have an account link -->
-            <div class="already-have-account">
-                <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
-            </div>
         </form>
-    </div>
 
+        <!-- 已有账户？ -->
+        <div class="already-have-account">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+        </div>
+    </div>
 </body>
 </html>
