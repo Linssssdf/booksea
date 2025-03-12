@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 
 from pages.views import index, PasswordResetView, user_register, user_login, signout, home, book_detail, news, support, \
-    account_setting
+    account_setting, borrow_book, return_book
 
 urlpatterns = [
     path("", index),
@@ -16,6 +16,8 @@ urlpatterns = [
     path("home/", home, name="home"),
     path("support/", support, name="support"),
     path("news/", news, name="news"),
-    path("book_detail/", book_detail, name="book_detail"),
     path("account_setting",account_setting, name="account_setting"),
+    path('books/', book_detail, name='book_detail'),
+    path('books/<int:book_id>/borrow/', borrow_book, name='borrow_book'),  # Borrow book
+    path('books/<int:book_id>/return/', return_book, name='return_book'),  # Return book
 ]

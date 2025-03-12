@@ -1,14 +1,15 @@
 from django.contrib.auth import get_user_model, user_logged_out, authenticate, login
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.shortcuts import render, redirect, resolve_url
+from django.shortcuts import render, redirect, resolve_url, get_object_or_404
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 
 from django.http import HttpResponse
 
-from .models import User
+from .models import User, Book
+
 
 def index(request):
     if not request.user.is_authenticated:
@@ -124,8 +125,28 @@ def support(request):
 def news(request):
     return render(request, "pages/news.html")
 
-def book_detail(request):
-    return render(request, "pages/book_detail.html")
-
 def account_setting(request):
     return render(request, "pages/account_setting.html")
+
+def book_detail(request):
+    books = Book.objects.all()
+    return render(request, "pages/book_detail.html", {'books': books})
+
+def borrow_book(request, book_id):
+    """Allow users to borrow a book if available."""
+    if request.method == "POST":
+        book = get_object_or_404(Book, id=book_id)
+        if book.is_available:
+            book.is_available = False
+            book.save()
+    return redirect('book_detail')
+
+
+def return_book(request, book_id):
+    """Allow users to return a borrowed book."""
+    if request.method == "POST":
+        book = get_object_or_404(Book, id=book_id)
+        if not book.is_available:
+            book.is_available = True
+            book.save()
+    return redirect('book_detail')

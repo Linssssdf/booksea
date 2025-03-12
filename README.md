@@ -13,9 +13,9 @@ To populate (and reset) the database, run `python populate_db.py`
 
 Start the web server with `python manage.py runserver`, you should be able to access it at http://localhost:8000.
 
-The default customer account is `username: a, password: a`
+The default customer account is `username: a, password: a12345678`
 
-The default manager account is `username: manager, password: manager`
+The default manager account is `username: manager, password: manager123`
 
 Run Django shell with `python manage.py shell`
 

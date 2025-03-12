@@ -62,3 +62,23 @@ class User(AbstractBaseUser):
 
     def __str__(self):
         return self.username
+
+class Book(models.Model):
+    """
+    Represents a book in the library system.
+
+    Attributes:
+        title (str): The title of the book.
+        category (str): The category/genre of the book.
+        index (str): The unique index identifier for the book.
+        is_available (bool): Whether the book is currently available for borrowing.
+        rental_price (float): The rental price of the book.
+    """
+    title = models.CharField(max_length=200)
+    category = models.CharField(max_length=100)
+    index = models.CharField(max_length=50, unique=True)
+    is_available = models.BooleanField(default=True)
+    rental_price = models.DecimalField(max_digits=6, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.title} ({self.index})"
