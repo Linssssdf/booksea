@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+from django.utils import timezone
 import django
 
 from django.core.management import call_command
@@ -33,19 +35,49 @@ def create_customers(num_users=10):
         User.objects.create_user(username=username, email=email, password=password, display_name=display_name, role=role)
     print(f"Created {num_users} customers")
 
+
 def create_fake_books():
     """Create some fake book data if not already created."""
     fake_books = [
-        {'title': 'Java Programming', 'category': 'Programming', 'index': 'J', 'is_available': True, 'rental_price': 10.99},
-        {'title': 'Python', 'category': 'Programming', 'index': 'P', 'is_available': True, 'rental_price': 12.50},
-        {'title': 'Data Science', 'category': 'Data Science', 'index': 'D', 'is_available': True, 'rental_price': 15.00},
-        {'title': 'Machine Learning', 'category': 'AI & ML', 'index': 'M', 'is_available': True, 'rental_price': 18.75},
+        {'title': 'Java Programming', 'category': 'Programming', 'index': 'P1', 'img': '/img/java.jpg',
+         'is_available': True, 'rental_price': 10.99},
+        {'title': 'Python', 'category': 'Programming', 'index': 'P2', 'img': '/img/python.jpg', 'is_available': True,
+         'rental_price': 12.50},
+        {'title': 'Data Science', 'category': 'Data Science', 'index': 'D1', 'img': '/img/data_science.jpg',
+         'is_available': False, 'rental_price': 15.00},
+        {'title': 'Machine Learning', 'category': 'AI & ML', 'index': 'M1', 'img': '/img/machine_learning.jpg',
+         'is_available': False, 'rental_price': 18.75},
+        {'title': 'To Kill a Mockingbird', 'category': 'Novel', 'index': 'N1', 'img': '/img/to_kill_a_mockingbird.jpg',
+         'is_available': True, 'rental_price': 8.99},
+        {'title': '1984', 'category': 'Novel', 'index': 'N2', 'img': '/img/1984.jpg', 'is_available': False,
+         'rental_price': 9.50},
+        {'title': 'Pride and Prejudice', 'category': 'Novel', 'index': 'N3', 'img': '/img/pride_and_prejudice.jpg',
+         'is_available': True, 'rental_price': 10.25},
+        {'title': 'Sapiens: A Brief History of Humankind', 'category': 'History', 'index': 'H1',
+         'img': '/img/sapiens.jpg', 'is_available': True, 'rental_price': 14.00},
+        {'title': 'Guns, Germs, and Steel', 'category': 'History', 'index': 'H2', 'img': '/img/guns_germs_steel.jpg',
+         'is_available': False, 'rental_price': 13.99},
+        {'title': 'The Art of War', 'category': 'History', 'index': 'H3', 'img': '/img/art_of_war.jpg',
+         'is_available': True, 'rental_price': 11.75},
+        {'title': 'The Story of Art', 'category': 'Art', 'index': 'A1', 'img': '/img/story_of_art.jpg',
+         'is_available': True, 'rental_price': 17.99},
+        {'title': 'Ways of Seeing', 'category': 'Art', 'index': 'A2', 'img': '/img/ways_of_seeing.jpg',
+         'is_available': True, 'rental_price': 12.75},
+        {'title': 'The Elements of Graphic Design', 'category': 'Art', 'index': 'A3',
+         'img': '/img/elements_of_graphic_design.jpg', 'is_available': True, 'rental_price': 14.50},
     ]
+
     for book in fake_books:
+        borrow_date = timezone.now() if not book['is_available'] else None
+        due_date = timezone.now() + timedelta(days=7) if not book['is_available'] else None
+
         Book.objects.get_or_create(
             title=book['title'],
             category=book['category'],
             index=book['index'],
+            img=book['img'],
+            borrow_date=borrow_date,
+            due_date=due_date,
             is_available=book['is_available'],
             rental_price=book['rental_price']
         )

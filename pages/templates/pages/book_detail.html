@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Book Detail">
-    <title>Book Detail</title>
+    <meta name="description" content="Book Borrow Page">
+    <title>Borrow Book</title>
 
     <!-- Bootstrap -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
@@ -16,63 +16,126 @@
             color: black;
             padding: 20px;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-        .book-header {
-            text-align: center;
+        .search-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
             margin-bottom: 20px;
         }
-        .book-details {
-            font-size: 18px;
+        .search-box {
+            padding: 8px;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
         }
-        .btn-borrow {
-            margin-top: 20px;
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .book-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        .book-img {
+            width: 120px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .book-details {
+            flex-grow: 1;
+        }
+        .order-btn {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="book-header">Available Books</h1>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Available</th>
-                    <th>Rental Price</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for book in books %}
-                <tr>
-                    <td>{{ book.title }}</td>
-                    <td>{{ book.category }}</td>
-                    <td>{% if book.is_available %} Yes {% else %} No {% endif %}</td>
-                    <td>${{ book.rental_price }}</td>
-                    <td>
-                        {% if book.is_available %}
-                            <form action="{% url 'borrow_book' book.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary btn-borrow" onclick="alert('Book borrowed successfully!')">Borrow</button>
-                            </form>
-                        {% else %}
-                            <form action="{% url 'return_book' book.id %}" method="post">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-secondary btn-borrow" onclick="alert('Book returned successfully!')">Return</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="Search by category..." id="searchBox">
+        <button class="btn btn-primary" onclick="searchCategory()">Search</button>
     </div>
+
+    <div class="book-list">
+        {% for book in books %}
+        <div class="book-entry" data-title="{{ book.title }}" data-category="{{ book.category }}">
+            <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
+            <div class="book-details">
+                <p><strong>{{ book.title }}</strong></p>
+                {% if not book.is_available %}
+                    <p>From: {{ book.borrow_date }}</p>
+                    <p>To: {{ book.due_date }}</p>
+                {% endif %}
+                <p>Rental price: {{ book.rental_price }} GBP</p>
+            </div>
+            <div>
+                {% if book.is_available %}
+                    <form action="{% url 'borrow_book' book.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="order-btn">Borrow</button>
+                    </form>
+                {% else %}
+                    <form action="{% url 'return_book' book.id %}" method="post" onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
+                        {% csrf_token %}
+                        <button type="submit" class="order-btn" style="background: gray;">Return</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function searchCategory() {
+            let query = document.getElementById("searchBox").value.toLowerCase();  // 获取输入并转换为小写
+            let bookEntries = document.querySelectorAll(".book-entry");
+
+            bookEntries.forEach(book => {
+                let title = book.getAttribute("data-title").toLowerCase();
+                let category = book.getAttribute("data-category").toLowerCase();
+
+                // If the title or category contains the search keyword, it will be displayed, otherwise it will be hidden.
+                if (title.includes(query) || category.includes(query)) {
+                    book.style.display = "flex";  // Show matching books
+                } else {
+                    book.style.display = "none";  // Hide matching books
+                }
+            });
+        }
+
+        function confirmReturn(dueDate, totalPrice) {
+            return confirm(`Your book is due on ${dueDate}. The total price is ${totalPrice} GBP. Do you want to return it?`);
+        }
+
+
+<!--        document.addEventListener("DOMContentLoaded", function () {-->
+<!--            const searchBox = document.getElementById("searchBox");-->
+<!--            const bookEntries = document.querySelectorAll(".book-entry");-->
+
+<!--            searchBox.addEventListener("keyup", function () {-->
+<!--                let query = searchBox.value.toLowerCase();-->
+<!--                bookEntries.forEach(book => {-->
+<!--                    let title = book.getAttribute("data-title").toLowerCase();-->
+<!--                    let category = book.getAttribute("data-category").toLowerCase();-->
+
+<!--                    if (title.includes(query) || category.includes(query)) {-->
+<!--                        book.style.display = "flex";-->
+<!--                    } else {-->
+<!--                        book.style.display = "none";-->
+<!--                    }-->
+<!--                });-->
+<!--            });-->
+<!--        });-->
+    </script>
 </body>
 </html>

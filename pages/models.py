@@ -1,6 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager, AbstractBaseUser
 from django.db import models
 
+
 # Create your models here.
 class UserManager(BaseUserManager):
     """
@@ -78,7 +79,10 @@ class Book(models.Model):
     category = models.CharField(max_length=100)
     index = models.CharField(max_length=50, unique=True)
     is_available = models.BooleanField(default=True)
+    img = models.CharField(max_length=255)
     rental_price = models.DecimalField(max_digits=6, decimal_places=2)
+    borrow_date = models.DateTimeField(null=True, blank=True)
+    due_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.title} ({self.index})"

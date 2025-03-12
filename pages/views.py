@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth import get_user_model, user_logged_out, authenticate, login
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
@@ -138,9 +140,10 @@ def borrow_book(request, book_id):
         book = get_object_or_404(Book, id=book_id)
         if book.is_available:
             book.is_available = False
+            book.borrow_date = datetime.now()
+            book.due_date = datetime.now() + timedelta(days=7)
             book.save()
     return redirect('book_detail')
-
 
 def return_book(request, book_id):
     """Allow users to return a borrowed book."""
@@ -148,5 +151,7 @@ def return_book(request, book_id):
         book = get_object_or_404(Book, id=book_id)
         if not book.is_available:
             book.is_available = True
+            book.borrow_date = None
+            book.due_date = None
             book.save()
     return redirect('book_detail')

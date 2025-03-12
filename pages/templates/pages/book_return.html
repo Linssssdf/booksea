@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book Return Page">
+    <title>Borrowed Books</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #E6E6FA, #FFFACD);
+            color: black;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .book-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .book-img {
+            width: 100px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .book-info {
+            flex-grow: 1;
+        }
+        .book-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .return-button {
+            padding: 10px 15px;
+            border: 1px solid black;
+            background-color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Currently Borrowed Books</h1>
+
+        {% for book in books %}
+        {% if not book.is_available %}
+        <div class="book-entry">
+            <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
+            <div class="book-info">
+                <p>Currently renting</p>
+                <p class="book-title">&laquo;{{ book.title }}&raquo;</p>
+                <p>Return date: dd/mm/yyyy</p>
+                <p>Price: {{ book.rental_price }} GBP</p>
+            </div>
+            <form action="{% url 'return_book' book.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="return-button" onclick="alert('Book returned successfully!')">Return</button>
+            </form>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</body>
+</html>
