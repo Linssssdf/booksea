@@ -2,9 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>support</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
+            color: black;
+            position: relative;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .left-section {
+            width: 40%;
+        }
+        .right-section {
+            width: 55%;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
+    <div class="left-section">
+        <h2>Contact Support</h2>
+        <p><strong>Email:</strong> support@company.com</p>
+        <p><strong>Phone:</strong> +44 1234 567890</p>
+        <p><strong>Address:</strong> Glasgow, UK</p>
+    </div>
 
+    <div class="right-section">
+        <h2>Send Your Feedback</h2>
+        <form id="feedbackForm">
+            <textarea id="feedback" placeholder="Enter your feedback here..."></textarea>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const feedback = document.getElementById("feedback").value;
+            if (feedback.trim() === "") {
+                alert("Please enter your feedback before submitting.");
+                return;
+            }
+            alert("Your feedback has been submitted successfully!");
+            document.getElementById("feedback").value = "";
+        });
+    </script>
 </body>
 </html>

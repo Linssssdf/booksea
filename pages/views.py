@@ -1,5 +1,6 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model, user_logged_out, authenticate, login
 from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
 from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
@@ -128,21 +129,69 @@ def news(request):
     return render(request, "pages/news.html")
 
 def account_setting(request):
+    if request.method == "POST":
+        user = request.user
+        user.display_name = request.POST.get("name", user.display_name)
+        user.birthday = request.POST.get("birthday", user.birthday)
+        user.college = request.POST.get("college", user.college)
+        user.email = request.POST.get("email", user.email)
+        user.save()
+        return redirect('account_setting')
     return render(request, "pages/account_setting.html")
+
+def balance(request):
+    if request.method == "POST":
+        user = request.user
+        try:
+            amount = request.POST.get("amount")
+            amount = float(amount) if amount else 0.0
+            if user.balance is None:
+                user.balance = 0.0
+            if amount > 0.0:
+                user.balance += amount
+                user.save()
+        except ValueError:
+            print("balance error")
+
+        return redirect('balance')
+
+    return render(request, "pages/balance.html")
+
+def order(request):
+    borrowed_books = Book.objects.filter(is_available=False, borrower=request.user)
+    return render(request, "pages/order.html", {"borrowed_books": borrowed_books})
 
 def book_detail(request):
     books = Book.objects.all()
     return render(request, "pages/book_detail.html", {'books': books})
 
+
 def borrow_book(request, book_id):
-    """Allow users to borrow a book if available."""
+    """Allow users to borrow a book if they have enough balance."""
     if request.method == "POST":
         book = get_object_or_404(Book, id=book_id)
+        user = request.user  # Get the currently logged-in user
+
         if book.is_available:
-            book.is_available = False
-            book.borrow_date = datetime.now()
-            book.due_date = datetime.now() + timedelta(days=7)
-            book.save()
+            rental_price = book.rental_price  # Get book rental price
+
+            if user.balance is not None and user.balance >= rental_price:
+                user.balance -= rental_price
+                user.save()
+
+                # Update book status
+                book.is_available = False
+                book.borrow_date = datetime.now()
+                book.due_date = datetime.now() + timedelta(days=7)
+                book.borrower = user
+                book.save()
+
+                messages.success(request, f"You have successfully borrowed {book.title}.")
+                return redirect('book_detail')
+            else:
+                messages.error(request, "Insufficient balance. Please top up your account.")
+                return redirect('book_detail')
+
     return redirect('book_detail')
 
 def return_book(request, book_id):
@@ -155,3 +204,32 @@ def return_book(request, book_id):
             book.due_date = None
             book.save()
     return redirect('book_detail')
+
+
+def manager_home(request):
+    # 获取所有借阅中的书籍
+    borrowed_books = Book.objects.filter(
+        borrower__isnull=False,
+        is_available=False
+    ).select_related('borrower')
+
+    # 为每本书添加状态信息
+    for book in borrowed_books:
+        if book.due_date:
+            book.time_remaining = book.due_date - timezone.now()
+            book.is_overdue = book.time_remaining.days < 0
+
+    # 准备统计信息
+    status = {
+        'total_books': Book.objects.count(),
+        'available_books': Book.objects.filter(is_available=True).count(),
+        'overdue_books': Book.objects.filter(
+            due_date__lt=timezone.now(),
+            is_available=False
+        ).count()
+    }
+
+    return render(request, 'manager_home.html', {
+        'borrowed_books': borrowed_books,
+        'stats': status
+    })

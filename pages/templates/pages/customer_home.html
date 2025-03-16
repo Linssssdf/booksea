@@ -12,7 +12,7 @@
 
     <style>
         body {
-            background: linear-gradient(to right, #E6E6FA, #FFFACD);
+            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
             color: black;
             position: relative;
             min-height: 100vh;
@@ -95,11 +95,11 @@
                     <p>New popular books from the Harry Potter series have been added.</p>
                 </li>
                 <li>
-                    <a href="#">2. Upcoming events</a>
+                    <a href="{% url 'news' %}">2. Upcoming events</a>
                     <p>Book club: A book discussion on the theme of "Literature and Society" will be held next Tuesday (February 13).</p>
                 </li>
                 <li>
-                    <a href="#">3. New features launched</a>
+                    <a href="{% url 'book_detail' %}">3. New features launched</a>
                     <p>Self-service borrowing and returning book functions.</p>
                 </li>
             </ul>

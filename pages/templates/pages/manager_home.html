@@ -1,10 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
-    <title>Library System - Manager Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manager Dashboard">
+    <title>Manager Dashboard</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* 保持原有样式 */
+        body {
+            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
+            color: black;
+            position: relative;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .top-left-logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .top-nav {
+            text-align: right;
+        }
+        .top-nav a {
+            margin-left: 15px;
+            color: #2176C1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* 管理专用样式 */
+        .management-section {
+            margin: 30px 0;
+            padding: 20px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        .btn-manager {
+            background: #28a745;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            border: none;
+        }
+        .loan-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        .loan-table th,
+        .loan-table td {
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .loan-table th {
+            background: #2176C1;
+            color: white;
+        }
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+    </style>
 </head>
 <body>
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
 
+    <div class="container">
+        <div class="top-nav">
+            <a href="{% url 'signout' %}">Log Out</a>
+            <a href="{% url 'support' %}">Support & Feedback</a>
+        </div>
+
+        <h1 class="mb-4">LIBRARY MANAGEMENT DASHBOARD</h1>
+
+        <!-- 当前借阅 -->
+        <div class="management-section">
+            <h3>📖 Borrowed Books ({borrowed_books|length})</h3>
+            <table class="loan-table">
+                <thead>
+                    <tr>
+                        <th>Borrower</th>
+                        <th>Book Title</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for book in borrowed_books %}
+                    <tr class="{% if book.is_overdue %}alert-warning{% endif %}">
+                        <td>{{ book.borrower.username }}</td>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.borrow_date|date:"Y-m-d" }}</td>
+                        <td>{{ book.due_date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if book.is_overdue %}
+                                <span class="text-danger">OVERDUE</span>
+                            {% else %}
+                                {{ book.due_date|timeuntil }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No books currently borrowed</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 库存统计 -->
+        <div class="management-section">
+            <h3>📊 Inventory Status</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="alert alert-info">
+                        Total Books: {{ stats.total_books }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-success">
+                        Available Now: {{ stats.available_books }}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-warning">
+                        Overdue Books: {{ stats.overdue_books }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

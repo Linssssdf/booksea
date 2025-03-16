@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="My Borrowed Books">
+    <title>My Borrowed Books</title>
+
+    <!-- Bootstrap -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
+            color: black;
+            padding: 20px;
+        }
+        .book-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .book-entry {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            border-bottom: 1px solid #ccc;
+        }
+        .book-img {
+            width: 120px;
+            height: auto;
+            margin-right: 20px;
+        }
+        .book-details {
+            flex-grow: 1;
+        }
+        .return-btn {
+            padding: 10px 20px;
+            background: gray;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .return-btn:hover {
+            background: darkgray;
+        }
+    </style>
+</head>
+<body>
+    <h2>My Borrowed Books</h2>
+
+    <div class="book-list">
+        {% for book in borrowed_books %}
+        <div class="book-entry">
+            <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
+            <div class="book-details">
+                <p><strong>{{ book.title }}</strong></p>
+                <p>From: {{ book.borrow_date }}</p>
+                <p>To: {{ book.due_date }}</p>
+                <p>Rental price: {{ book.rental_price }} GBP</p>
+            </div>
+            <div>
+                <form action="{% url 'return_book' book.id %}" method="post" onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
+                    {% csrf_token %}
+                    <button type="submit" class="return-btn">Return</button>
+                </form>
+            </div>
+        </div>
+        {% empty %}
+            <p>You have not borrowed any books.</p>
+        {% endfor %}
+    </div>
+
+    {% if messages %}
+        <script>
+            {% for message in messages %}
+                alert("{{ message }}");
+            {% endfor %}
+        </script>
+    {% endif %}
+
+    <script>
+        function confirmReturn(dueDate, totalPrice) {
+            return confirm(`Your book is due on ${dueDate}. The total price is ${totalPrice} GBP. Do you want to return it?`);
+        }
+    </script>
+</body>
+</html>

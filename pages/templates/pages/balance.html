@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Balance</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
+            color: black;
+            position: relative;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .content {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        h2 {
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+        }
+        .balance-box {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            border: 2px solid var(--primary);
+            transition: transform 0.2s ease;
+        }
+        .balance-box:hover {
+            transform: translateY(-2px);
+        }
+        #balance {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+            margin-top: 0.5rem;
+        }
+        form {
+            display: grid;
+            gap: 1.5rem;
+        }
+        input {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+        }
+        button {
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: #5b52e0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+        }
+        .success-message {
+            background: #e8f5e9;
+            color: #1b5e20;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            display: none;
+            animation: fadeIn 0.5s ease;
+            border: 2px solid #a5d6a7;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media (max-width: 480px) {
+            .content {
+                padding: 2rem;
+                border-radius: 0;
+            }
+
+            h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h2>💰 Account Balance</h2>
+
+        <div class="balance-box">
+            <div>Current Balance</div>
+            <div id="balance">{{ request.user.balance }}</div>
+            <small>USD</small>
+        </div>
+
+        <div id="success-message" class="success-message">
+            Deposit successful! Funds will be available immediately.
+        </div>
+
+        <form method="POST" id="balance-form">
+            {% csrf_token %}
+            <input
+                type="number"
+                id="amount"
+                name="amount"
+                step="0.01"
+                placeholder="Enter deposit amount (USD)"
+                min="0"
+                required
+            >
+            <button type="submit">
+                Add Funds
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("balance-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const amountInput = document.getElementById("amount");
+            const amount = parseFloat(amountInput.value);
+            const successMessage = document.getElementById("success-message");
+
+            if (!isNaN(amount) && amount > 0) {
+                // 显示成功提示
+                successMessage.style.display = 'block';
+
+                // 3秒后淡出提示
+                setTimeout(() => {
+                    successMessage.style.opacity = '0';
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                        successMessage.style.opacity = '1';
+                    }, 500);
+                }, 3000);
+
+                // 实际提交表单（根据后端实现可能需要异步处理）
+                this.submit();
+            } else {
+                // 错误状态处理
+                amountInput.style.borderColor = '#ef5350';
+                setTimeout(() => {
+                    amountInput.style.borderColor = '#e0e0e0';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>

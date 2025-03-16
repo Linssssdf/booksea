@@ -18,6 +18,10 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        extra_fields.setdefault('role', User.UserRole.MANAGER)
+        return self.create_user(username, email, password, **extra_fields)
+
     def get_by_natural_key(self, username: str):
         return self.get(username=username)
 
@@ -46,6 +50,9 @@ class User(AbstractBaseUser):
     role = models.IntegerField(
         choices=UserRole.choices, default=UserRole.CUSTOMER)
     email = models.CharField(max_length=50, unique=True)
+    birthday = models.DateField(null=True, blank=True)
+    college = models.CharField(max_length=100, blank=True)
+    balance = models.FloatField(null=True)
 
     @property
     def is_staff(self):
@@ -54,12 +61,6 @@ class User(AbstractBaseUser):
     @property
     def is_superuser(self):
         return self.role == User.UserRole.MANAGER
-
-    def has_perm(self, perm, obj=None):
-        return self.is_staff
-
-    def has_module_perms(self, app_label):
-        return self.is_staff
 
     def __str__(self):
         return self.username
@@ -80,9 +81,10 @@ class Book(models.Model):
     index = models.CharField(max_length=50, unique=True)
     is_available = models.BooleanField(default=True)
     img = models.CharField(max_length=255)
-    rental_price = models.DecimalField(max_digits=6, decimal_places=2)
+    rental_price = models.FloatField(null=True)
     borrow_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="borrowed_books")
 
     def __str__(self):
         return f"{self.title} ({self.index})"

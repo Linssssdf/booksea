@@ -31,8 +31,11 @@ def create_customers(num_users=10):
         email = fake.email()
         password = fake.password()
         display_name = fake.name()
+        birthday = fake.date_of_birth(minimum_age=18, maximum_age=30)
+        college = fake.company()
         role = User.UserRole.CUSTOMER
-        User.objects.create_user(username=username, email=email, password=password, display_name=display_name, role=role)
+        balance = round(random.uniform(5.0, 50.0), 2)
+        User.objects.create_user(username=username, email=email, password=password, display_name=display_name, birthday=birthday, balance=balance, college=college, role=role)
     print(f"Created {num_users} customers")
 
 
@@ -44,7 +47,7 @@ def create_fake_books():
         {'title': 'Python', 'category': 'Programming', 'index': 'P2', 'img': '/img/python.jpg', 'is_available': True,
          'rental_price': 12.50},
         {'title': 'Data Science', 'category': 'Data Science', 'index': 'D1', 'img': '/img/data_science.jpg',
-         'is_available': False, 'rental_price': 15.00},
+         'is_available': True, 'rental_price': 15.00},
         {'title': 'Machine Learning', 'category': 'AI & ML', 'index': 'M1', 'img': '/img/machine_learning.jpg',
          'is_available': False, 'rental_price': 18.75},
         {'title': 'To Kill a Mockingbird', 'category': 'Novel', 'index': 'N1', 'img': '/img/to_kill_a_mockingbird.jpg',
