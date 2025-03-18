@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model, user_logged_out, authenticate, login
@@ -8,10 +9,8 @@ from django.shortcuts import render, redirect, resolve_url, get_object_or_404
 from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
-
 from django.http import HttpResponse
-
-from .models import User, Book
+from .models import User, Book, LibraryEvent
 
 
 def index(request):
@@ -23,7 +22,7 @@ def home(request):
     if not request.user.is_authenticated:
         return redirect(resolve_url('login'))
     if request.user.role == User.UserRole.MANAGER:
-        return render(request, 'pages/manager_home.html')
+        return redirect('manager_home')
     if request.user.role == User.UserRole.CUSTOMER:
         return render(request, 'pages/customer_home.html')
 
@@ -36,11 +35,11 @@ def signout(request):
 class PasswordResetConfirmView(PasswordResetConfirmView):
     def form_valid(self, form):
         form.save()  # This resets the password
-        # messages.success(self.request, 'Your password has been successfully reset. You can now log in with your new password.')
         return super().form_valid(form)
 
     def get_success_url(self):
         return resolve_url('login')
+
 class PasswordResetForm(PasswordResetForm):
     def get_users(self, email):
         User = get_user_model()
@@ -48,7 +47,6 @@ class PasswordResetForm(PasswordResetForm):
 
 class PasswordResetView(PasswordResetView):
     form_class = PasswordResetForm
-
 
 class UserRegistrationForm(forms.ModelForm):
      password = forms.CharField(label='Password', widget=forms.PasswordInput)
@@ -75,7 +73,6 @@ class UserRegistrationForm(forms.ModelForm):
           if User.objects.filter(email=email).exists():
                raise forms.ValidationError('Email already in use')
           return email
-
 
 def user_register(request):
      if request.method == 'POST':
@@ -126,7 +123,9 @@ def support(request):
     return render(request, "pages/support.html")
 
 def news(request):
-    return render(request, "pages/news.html")
+    # Show latest events first
+    events = LibraryEvent.objects.order_by('-date')
+    return render(request, "pages/news.html", {'events': events})
 
 def account_setting(request):
     if request.method == "POST":
@@ -165,7 +164,6 @@ def book_detail(request):
     books = Book.objects.all()
     return render(request, "pages/book_detail.html", {'books': books})
 
-
 def borrow_book(request, book_id):
     """Allow users to borrow a book if they have enough balance."""
     if request.method == "POST":
@@ -178,7 +176,6 @@ def borrow_book(request, book_id):
             if user.balance is not None and user.balance >= rental_price:
                 user.balance -= rental_price
                 user.save()
-
                 # Update book status
                 book.is_available = False
                 book.borrow_date = datetime.now()
@@ -195,16 +192,33 @@ def borrow_book(request, book_id):
     return redirect('book_detail')
 
 def return_book(request, book_id):
-    """Allow users to return a borrowed book."""
+    """Allow users to return a borrowed book with an overdue fee if applicable."""
     if request.method == "POST":
         book = get_object_or_404(Book, id=book_id)
+        user = request.user
+
         if not book.is_available:
+            overdue_fee = 5.00  # £5 late fee
+            is_overdue = book.due_date and timezone.now() > book.due_date
+
+            if is_overdue:
+                if user.balance is not None and user.balance >= overdue_fee:
+                    user.balance -= overdue_fee  # Deduct late fee
+                    user.save()
+                    messages.warning(request, f"Book returned late! £5 has been deducted as a late fee.")
+                else:
+                    messages.error(request, "You do not have enough balance to cover the £5 late fee. Please top up.")
+                    return redirect('order')  # Prevent return if fee can't be paid
+
             book.is_available = True
             book.borrow_date = None
             book.due_date = None
+            book.borrower = None
             book.save()
-    return redirect('book_detail')
 
+            messages.success(request, f"You have successfully returned {book.title}.")
+
+    return redirect('order')
 
 def manager_home(request):
     borrowed_books = Book.objects.filter(
@@ -213,19 +227,35 @@ def manager_home(request):
 
     for book in borrowed_books:
         if book.due_date:
-            book.time_remaining = book.due_date - timezone.now()
-            book.is_overdue = book.time_remaining.days < 0
+            book.is_overdue = book.due_date < timezone.now()
 
     stats = {
         'total_books': Book.objects.count(),
         'available_books': Book.objects.filter(is_available=True).count(),
         'overdue_books': Book.objects.filter(
-            due_date__lt=timezone.now(),
+            is_overdue=book.is_overdue,
             is_available=False
         ).count()
     }
 
-    return render(request, 'manager_home.html', {
+    return render(request, 'pages/manager_home.html', {
         'borrowed_books': borrowed_books,
         'stats': stats
     })
+
+def add_book(request):
+    if request.method == 'POST':
+        try:
+            Book.objects.create(
+                title=request.POST['title'],
+                category=request.POST['category'],
+                index=request.POST['index'],
+                rental_price=request.POST['rental_price'],
+                is_available=True,
+            )
+            messages.success(request, 'Book added successfully!')
+            return redirect('add_book')
+        except Exception as e:
+            messages.error(request, f'Error adding book: {str(e)}')
+
+    return render(request, 'pages/manager_home.html')

@@ -75,6 +75,10 @@ class Book(models.Model):
         index (str): The unique index identifier for the book.
         is_available (bool): Whether the book is currently available for borrowing.
         rental_price (float): The rental price of the book.
+        borrow_date (datetime): The date the book was borrowed.
+        due_date (datetime): The due date for returning the book.
+        borrower (User): The user who borrowed the book.
+        is_overdue (bool): Whether the book is overdue.
     """
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=100)
@@ -84,7 +88,53 @@ class Book(models.Model):
     rental_price = models.FloatField(null=True)
     borrow_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)
+    is_overdue = models.BooleanField(default=False)
     borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="borrowed_books")
 
     def __str__(self):
         return f"{self.title} ({self.index})"
+
+class LibraryEvent(models.Model):
+    """
+    Represents an event organized by the library.
+
+    Attributes:
+        title (str): The title of the event.
+        description (str): A detailed description of the event.
+        date (datetime): The scheduled date and time of the event.
+        event_type (str): The category/type of the event (e.g., book club, author talk).
+        location (str): The venue where the event takes place.
+        poster(img):The path of image
+    """
+    EVENT_TYPES = [
+        ("Book Club", "Book Club"),
+        ("Author Talk", "Author Talk"),
+        ("Workshop", "Workshop"),
+        ("Seminar", "Seminar"),
+        ("Other", "Other"),
+    ]
+
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    date = models.DateTimeField()
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPES, default="Other")
+    location = models.CharField(max_length=255,default='Main Library')
+    poster = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.title} - {self.date.strftime('%Y-%m-%d %H:%M')}"
+
+class Inventory(models.Model):
+    """
+    Represents the inventory system for books in the library.
+
+    Attributes:
+        book (Book): The book associated with this inventory entry.
+        quantity (int): Number of copies available in stock.
+    """
+    book = models.OneToOneField(Book, on_delete=models.CASCADE, related_name="inventory")
+    quantity = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"Inventory for {self.book.title} - {self.quantity} copies"
+

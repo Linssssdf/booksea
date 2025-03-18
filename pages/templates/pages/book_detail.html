@@ -149,20 +149,16 @@
                         <p>From: {{ book.borrow_date }}</p>
                         <p>To: {{ book.due_date }}</p>
                     {% endif %}
-                    <p>Rental price: {{ book.rental_price }} GBP</p>
+                    <p>Rental price: ￡{{ book.rental_price }}</p>
                 </div>
                 <div>
                     {% if book.is_available %}
-                        <form action="{% url 'borrow_book' book.id %}" method="post">
+                        <form action="{% url 'borrow_book' book.id %}" method="post" onsubmit="return confirmBorrow('{{ book.rental_price }}')">
                             {% csrf_token %}
                             <button type="submit" class="borrow-btn">Borrow</button>
                         </form>
                     {% else %}
-                        <form action="{% url 'return_book' book.id %}" method="post"
-                              onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
-                            {% csrf_token %}
-                            <button type="submit" class="borrow-btn" style="background: gray;">Return</button>
-                        </form>
+                        <text style="color: gray; font-size: 1.2rem; text-decoration: line-through;">Borrowed!</text>
                     {% endif %}
                 </div>
             </div>
@@ -185,6 +181,17 @@
                     book.style.display = "none";
                 }
             });
+        }
+        function confirmBorrow(price) {
+            let balance = parseFloat("{{ request.user.balance }}");
+            let rentalPrice = parseFloat(price);
+
+            if (balance < rentalPrice) {
+                alert("Insufficient balance. Please top up your account.");
+                return false;  // Prevent form submission
+            }
+
+            return confirm(`This book costs £${rentalPrice}. Do you want to borrow it?`);
         }
     </script>
 

@@ -110,6 +110,22 @@
             background: rgba(0, 0, 0, 0.05);
         }
 
+        .add-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white !important;
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
+        }
+
         .status-overdue {
             color: red;
             font-weight: bold;
@@ -194,6 +210,45 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="management-section">
+            <h3>Add New Book</h3>
+
+            <form class="book-form" method="POST" action="{% url 'add_book' %}">
+                {% csrf_token %}
+                <table class="loan-table">
+                    <thead>
+                        <tr><th>Field</th><th>Input</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><label>Title</label></td>
+                            <td><input type="text" name="title" class="form-control" required></td>
+                        </tr>
+                        <tr>
+                            <td><label>Category</label></td>
+                            <td><input type="text" name="category" class="form-control" required></td>
+                        </tr>
+                        <tr>
+                            <td><label>Index Number</label></td>
+                            <td><input type="text" name="index" class="form-control" required></td>
+                        </tr>
+                        <tr>
+                            <td><label>Rental Price(￡)</label></td>
+                            <td>
+                                <div class="input-group">
+                                    <input type="number" name="rental_price" class="form-control" step="0.01" min="0" required>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button type="submit" class="add-btn">Add Book</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         </div>
     </div>
 

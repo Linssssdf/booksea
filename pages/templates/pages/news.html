@@ -106,45 +106,18 @@
     <div class="container">
         <h2 class="headline">Library Latest News</h2>
 
+        {% for event in events %}
         <div class="news-item">
-            <h2>New Book Wall is Now Open</h2>
-            <p class="date">✦ From February 15, 2024 | First Floor Reception</p>
-            <p>After careful preparation, the newly upgraded **smart book recommendation wall** is officially open! Using the <span class="highlight">AI book recommendation system</span>, you can enter your reading preferences and receive personalized book list recommendations. The first batch features 500+ award-winning books from 2023.</p>
+            <h2>{{ event.title }}</h2>
+            <p class="date"> {{ event.date|date:"F d, Y" }} | {{ event.location }}</p>
+            <p>{{ event.description|linebreaks }}</p>
+            {% if event.poster %}
+                <img src="{% static event.poster %}">
+            {% endif %}
         </div>
-
-        <div class="news-item">
-            <h2>Literature and Society Book Club</h2>
-            <p class="date">✦ February 13, 2024 (Tuesday) 19:00 | Seminar Room, Third Floor</p>
-            <p>We invite all book lovers to join our discussion on **"Literature and Society."** This session will focus on the significance of George Orwell's *1984* in today's world. Free refreshments and <span class="highlight">limited edition bookmarks</span> will be available.</p>
-            <img src="{% static '/img/reading_meeting.jpg' %}" alt="Book Club Meeting">
-        </div>
-
-        <div class="news-item">
-            <h2>Children's Story Workshop Upgrade</h2>
-            <p class="date">✦ Every Saturday at 10:00 am | Children's Reading World</p>
-            <p>Join our new **"Story + Handmade" immersive experience**! On February 17, we’ll feature a *Harry Potter*-themed event with **3D book making and role-playing games**.</p>
-            <img src="{% static '/img/children_activity.jpg' %}" alt="Children's Activity">
-        </div>
-
-        <div class="news-item">
-            <h2>24-Hour Study Area Now Open</h2>
-            <p class="date">Trial operation starts March 1, 2025</p>
-            <p>Our brand-new **Smart Study Space** offers:<br>
-            ✦ Private study booths with wireless charging<br>
-            ✦ Self-service coffee and snacks<br>
-            ✦ Silent zone & video learning room<br>
-            <span class="highlight">Early bird membership reservations now open.</span></p>
-        </div>
-
-        <div class="news-item">
-            <h2>"Friends of the Library" Membership</h2>
-            <p class="date">2024 Membership Enrollment Now Open</p>
-            <p>Exclusive benefits include:<br>
-            ✦ **Priority access to new book loans**<br>
-            ✦ **Reserved seating at reading clubs**<br>
-            ✦ **Annual customized book list service**<br>
-            ✦ **Discounts at partner bookstores**</p>
-        </div>
+        {% empty %}
+        <p>No upcoming events at the moment.</p>
+        {% endfor %}
     </div>
 
 </body>
