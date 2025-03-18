@@ -4,84 +4,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Manager Dashboard">
-    <title>Manager Dashboard</title>
+    <meta name="description" content="Manager | BookSea">
+    <title>Manager | BookSea</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap & Fonts -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        /* 保持原有样式 */
-        body {
-            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
-            color: black;
-            position: relative;
-            min-height: 100vh;
-            padding: 20px;
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
+            --border: #ddd;
         }
+
+        body {
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            padding: 40px 20px;
+            position: relative;
+        }
+
         .top-left-logo {
             position: absolute;
             top: 20px;
             left: 20px;
-            width: 200px;
+            width: 150px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
         }
+
         .container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: auto;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
+
         .top-nav {
             text-align: right;
         }
+
         .top-nav a {
             margin-left: 15px;
-            color: #2176C1;
+            color: var(--primary);
             text-decoration: none;
             font-weight: bold;
+            transition: color 0.3s ease;
         }
+
         .top-nav a:hover {
+            color: var(--accent);
             text-decoration: underline;
         }
 
-        /* 管理专用样式 */
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
         .management-section {
             margin: 30px 0;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 10px;
             background: #f8f9fa;
+            text-align: left;
         }
-        .btn-manager {
-            background: #28a745;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 5px;
-            border: none;
+
+        .management-section h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
+
         .loan-table {
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
         }
+
         .loan-table th,
         .loan-table td {
             padding: 12px;
             border-bottom: 1px solid #dee2e6;
+            text-align: center;
         }
+
         .loan-table th {
-            background: #2176C1;
+            background: var(--primary);
             color: white;
+            font-weight: bold;
         }
-        .alert-warning {
-            color: #856404;
-            background-color: #fff3cd;
-            border-color: #ffeeba;
+
+        .loan-table tr:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .status-overdue {
+            color: red;
+            font-weight: bold;
+        }
+
+        .alert-info, .alert-success, .alert-warning {
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
+
+    <!-- Top Left Logo -->
     <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
 
     <div class="container">
@@ -90,11 +135,11 @@
             <a href="{% url 'support' %}">Support & Feedback</a>
         </div>
 
-        <h1 class="mb-4">LIBRARY MANAGEMENT DASHBOARD</h1>
+        <h1>LIBRARY MANAGEMENT HOME</h1>
 
-        <!-- 当前借阅 -->
+        <!-- Borrowed Books Section -->
         <div class="management-section">
-            <h3>📖 Borrowed Books ({borrowed_books|length})</h3>
+            <h3>Borrowed Books ({{ borrowed_books|length }})</h3>
             <table class="loan-table">
                 <thead>
                     <tr>
@@ -107,14 +152,14 @@
                 </thead>
                 <tbody>
                     {% for book in borrowed_books %}
-                    <tr class="{% if book.is_overdue %}alert-warning{% endif %}">
+                    <tr class="{% if book.is_overdue %}status-overdue{% endif %}">
                         <td>{{ book.borrower.username }}</td>
                         <td>{{ book.title }}</td>
                         <td>{{ book.borrow_date|date:"Y-m-d" }}</td>
                         <td>{{ book.due_date|date:"Y-m-d" }}</td>
                         <td>
                             {% if book.is_overdue %}
-                                <span class="text-danger">OVERDUE</span>
+                                <span class="status-overdue">OVERDUE</span>
                             {% else %}
                                 {{ book.due_date|timeuntil }}
                             {% endif %}
@@ -129,27 +174,28 @@
             </table>
         </div>
 
-        <!-- 库存统计 -->
+        <!-- Inventory Status Section -->
         <div class="management-section">
-            <h3>📊 Inventory Status</h3>
+            <h3>Inventory Status</h3>
             <div class="row">
                 <div class="col-md-4">
                     <div class="alert alert-info">
-                        Total Books: {{ stats.total_books }}
+                        Total Books: <strong>{{ stats.total_books }}</strong>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="alert alert-success">
-                        Available Now: {{ stats.available_books }}
+                        Available Now: <strong>{{ stats.available_books }}</strong>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="alert alert-warning">
-                        Overdue Books: {{ stats.overdue_books }}
+                        Overdue Books: <strong>{{ stats.overdue_books }}</strong>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </body>
 </html>

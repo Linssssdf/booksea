@@ -92,7 +92,7 @@ def user_register(request):
 
 def user_login(request):
      if request.method == 'POST':
-          form = AuthenticationForm(data=request.POST)
+          form = AuthenticationForm(request, data=request.POST)
           if form.is_valid():
                username = form.cleaned_data.get('username')
                password = form.cleaned_data.get('password')
@@ -207,20 +207,16 @@ def return_book(request, book_id):
 
 
 def manager_home(request):
-    # 获取所有借阅中的书籍
     borrowed_books = Book.objects.filter(
-        borrower__isnull=False,
         is_available=False
     ).select_related('borrower')
 
-    # 为每本书添加状态信息
     for book in borrowed_books:
         if book.due_date:
             book.time_remaining = book.due_date - timezone.now()
             book.is_overdue = book.time_remaining.days < 0
 
-    # 准备统计信息
-    status = {
+    stats = {
         'total_books': Book.objects.count(),
         'available_books': Book.objects.filter(is_available=True).count(),
         'overdue_books': Book.objects.filter(
@@ -231,5 +227,5 @@ def manager_home(request):
 
     return render(request, 'manager_home.html', {
         'borrowed_books': borrowed_books,
-        'stats': status
+        'stats': stats
     })

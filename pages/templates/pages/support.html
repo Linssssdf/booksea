@@ -1,61 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support</title>
+    <meta name="description" content="Support | BookSea">
+    <title>Support | BookSea</title>
+
+    <!-- Bootstrap & Fonts -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
+        }
+
         body {
-            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
-            color: black;
-            position: relative;
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
             min-height: 100vh;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 20px;
         }
-        .left-section {
-            width: 40%;
+
+        .top-left-logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 180px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
         }
-        .right-section {
-            width: 55%;
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 3rem 4rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 700px;
+            width: 90%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+            text-align: center;
         }
+
+        .headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .contact-info {
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .contact-info strong {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 500;
+            text-align: left;
+        }
+
         textarea {
             width: 100%;
-            height: 200px;
-            padding: 10px;
-            font-size: 16px;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            resize: none;
+            font-size: 1rem;
         }
-        button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #007BFF;
-            color: white;
+
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 92, 130, 0.1);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white !important;
+            padding: 1rem;
+            width: 100%;
             border: none;
-            cursor: pointer;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
         }
     </style>
 </head>
 <body>
-    <div class="left-section">
-        <h2>Contact Support</h2>
-        <p><strong>Email:</strong> support@company.com</p>
-        <p><strong>Phone:</strong> +44 1234 567890</p>
-        <p><strong>Address:</strong> Glasgow, UK</p>
-    </div>
 
-    <div class="right-section">
-        <h2>Send Your Feedback</h2>
+    <!-- Top Left Logo -->
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
+
+    <div class="container">
+        <h2 class="headline">Contact Support</h2>
+
+        <div class="contact-info">
+            <p><strong>Email:</strong> support@company.com</p>
+            <p><strong>Phone:</strong> +44 1234 567890</p>
+            <p><strong>Address:</strong> Glasgow, UK</p>
+        </div>
+
+        <h3 class="headline" style="font-size: 2rem;">Send Your Feedback</h3>
         <form id="feedbackForm">
-            <textarea id="feedback" placeholder="Enter your feedback here..."></textarea>
-            <button type="submit">Submit</button>
+            <div class="form-group">
+                <textarea id="feedback" placeholder="Enter your feedback here..." rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">Submit</button>
         </form>
     </div>
 
     <script>
         document.getElementById("feedbackForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            const feedback = document.getElementById("feedback").value;
-            if (feedback.trim() === "") {
+            const feedback = document.getElementById("feedback").value.trim();
+            if (feedback === "") {
                 alert("Please enter your feedback before submitting.");
                 return;
             }
@@ -63,5 +157,6 @@
             document.getElementById("feedback").value = "";
         });
     </script>
+
 </body>
 </html>

@@ -5,74 +5,151 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="My Borrowed Books">
-    <title>My Borrowed Books</title>
+    <title>My Borrowed Books | BookSea</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap & Fonts -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body {
-            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
-            color: black;
-            padding: 20px;
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
         }
+
+        body {
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        .top-left-logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 180px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 3rem 4rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            max-width: 700px;
+            width: 90%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
         .book-list {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            margin-top: 1.5rem;
         }
+
         .book-entry {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
+            background: #fff;
             padding: 15px;
-            border-bottom: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ddd;
+            transition: transform 0.2s ease;
         }
+
+        .book-entry:hover {
+            transform: scale(1.02);
+        }
+
         .book-img {
-            width: 120px;
+            width: 100px;
             height: auto;
+            border-radius: 8px;
             margin-right: 20px;
         }
+
         .book-details {
             flex-grow: 1;
+            text-align: left;
         }
+
+        .book-details p {
+            margin: 5px 0;
+            font-size: 1rem;
+        }
+
         .return-btn {
-            padding: 10px 20px;
-            background: gray;
-            color: white;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white !important;
+            padding: 0.8rem 1.2rem;
             border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
             cursor: pointer;
-            border-radius: 5px;
         }
+
         .return-btn:hover {
-            background: darkgray;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
         }
     </style>
 </head>
 <body>
-    <h2>My Borrowed Books</h2>
 
-    <div class="book-list">
-        {% for book in borrowed_books %}
-        <div class="book-entry">
-            <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
-            <div class="book-details">
-                <p><strong>{{ book.title }}</strong></p>
-                <p>From: {{ book.borrow_date }}</p>
-                <p>To: {{ book.due_date }}</p>
-                <p>Rental price: {{ book.rental_price }} GBP</p>
+    <!-- Top Left Logo -->
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
+
+    <div class="container">
+        <h2 class="headline">My Borrowed Books</h2>
+
+        <div class="book-list">
+            {% for book in borrowed_books %}
+            <div class="book-entry">
+                <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
+                <div class="book-details">
+                    <p><strong>{{ book.title }}</strong></p>
+                    <p>From: {{ book.borrow_date }}</p>
+                    <p>To: {{ book.due_date }}</p>
+                    <p>Rental price: {{ book.rental_price }} GBP</p>
+                </div>
+                <div>
+                    <form action="{% url 'return_book' book.id %}" method="post"
+                          onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
+                        {% csrf_token %}
+                        <button type="submit" class="return-btn">Return</button>
+                    </form>
+                </div>
             </div>
-            <div>
-                <form action="{% url 'return_book' book.id %}" method="post" onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
-                    {% csrf_token %}
-                    <button type="submit" class="return-btn">Return</button>
-                </form>
-            </div>
+            {% empty %}
+                <p>You have not borrowed any books.</p>
+            {% endfor %}
         </div>
-        {% empty %}
-            <p>You have not borrowed any books.</p>
-        {% endfor %}
     </div>
 
     {% if messages %}
@@ -88,5 +165,6 @@
             return confirm(`Your book is due on ${dueDate}. The total price is ${totalPrice} GBP. Do you want to return it?`);
         }
     </script>
+
 </body>
 </html>

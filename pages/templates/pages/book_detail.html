@@ -4,146 +4,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Book Borrow Page">
-    <title>Borrow Book</title>
+    <meta name="description" content="Book Details | BookSea">
+    <title>Book Details | BookSea</title>
 
-    <!-- Bootstrap -->
+    <!-- Bootstrap & Fonts -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        body {
-            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
-            color: black;
-            padding: 20px;
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
         }
+
+        body {
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+
+        .top-left-logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 180px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .headline {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 10px;
+        }
+
         .search-container {
             display: flex;
             justify-content: flex-end;
             align-items: center;
             margin-bottom: 20px;
         }
+
         .search-box {
-            padding: 8px;
-            width: 250px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 10px;
+            width: 300px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
             margin-right: 10px;
+            font-size: 1rem;
         }
+
         .book-list {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            margin-top: 1.5rem;
         }
+
         .book-entry {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            width: 100%;
-            padding: 15px;
-            border-bottom: 1px solid #ccc;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: left;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
+        .book-entry:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
         .book-img {
             width: 120px;
             height: auto;
+            border-radius: 8px;
             margin-right: 20px;
+            transition: transform 0.3s ease;
         }
+
         .book-details {
             flex-grow: 1;
+            text-align: left;
         }
-        .order-btn {
-            padding: 10px 20px;
-            background: green;
-            color: white;
+
+        .book-details p {
+            margin: 5px 0;
+            font-size: 1rem;
+        }
+
+        .borrow-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white !important;
+            padding: 0.8rem 1.2rem;
             border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.3s ease;
             cursor: pointer;
-            border-radius: 5px;
+        }
+
+        .borrow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
         }
     </style>
 </head>
 <body>
-    <div class="search-container">
-        <button class="back-btn" onclick="window.history.back()">&lt; Back</button>
-        <input type="text" class="search-box" placeholder="Search by category..." id="searchBox">
-        <button class="btn btn-primary" onclick="searchCategory()">Search</button>
-    </div>
 
-    <div class="book-list">
-        {% for book in books %}
-        <div class="book-entry" data-title="{{ book.title }}" data-category="{{ book.category }}">
-            <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
-            <div class="book-details">
-                <p><strong>{{ book.title }}</strong></p>
-                {% if not book.is_available %}
-                    <p>From: {{ book.borrow_date }}</p>
-                    <p>To: {{ book.due_date }}</p>
-                {% endif %}
-                <p>Rental price: {{ book.rental_price }} GBP</p>
-            </div>
-            <div>
-                {% if book.is_available %}
-                    <form action="{% url 'borrow_book' book.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="order-btn">Borrow</button>
-                    </form>
-                {% else %}
-                    <form action="{% url 'return_book' book.id %}" method="post" onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
-                        {% csrf_token %}
-                        <button type="submit" class="order-btn" style="background: gray;">Return</button>
-                    </form>
-                {% endif %}
-            </div>
+    <!-- Top Left Logo -->
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
+
+    <div class="container">
+        <h2 class="headline">Book Details</h2>
+
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="Search by category..." id="searchBox">
+            <button class="btn btn-primary" onclick="searchCategory()">Search</button>
         </div>
-        {% endfor %}
-        {% if messages %}
-            <script>
-                {% for message in messages %}
-                    alert("{{ message }}");
-                {% endfor %}
-            </script>
-        {% endif %}
+
+        <div class="book-list">
+            {% for book in books %}
+            <div class="book-entry" data-title="{{ book.title }}" data-category="{{ book.category }}">
+                <img src="{% static book.img %}" alt="{{ book.title }}" class="book-img">
+                <div class="book-details">
+                    <p><strong>{{ book.title }}</strong></p>
+                    {% if not book.is_available %}
+                        <p>From: {{ book.borrow_date }}</p>
+                        <p>To: {{ book.due_date }}</p>
+                    {% endif %}
+                    <p>Rental price: {{ book.rental_price }} GBP</p>
+                </div>
+                <div>
+                    {% if book.is_available %}
+                        <form action="{% url 'borrow_book' book.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="borrow-btn">Borrow</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'return_book' book.id %}" method="post"
+                              onsubmit="return confirmReturn('{{ book.due_date }}', '{{ book.rental_price }}')">
+                            {% csrf_token %}
+                            <button type="submit" class="borrow-btn" style="background: gray;">Return</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 
     <script>
         function searchCategory() {
-            let query = document.getElementById("searchBox").value.toLowerCase();  // 获取输入并转换为小写
+            let query = document.getElementById("searchBox").value.toLowerCase();
             let bookEntries = document.querySelectorAll(".book-entry");
 
             bookEntries.forEach(book => {
                 let title = book.getAttribute("data-title").toLowerCase();
                 let category = book.getAttribute("data-category").toLowerCase();
 
-                // If the title or category contains the search keyword, it will be displayed, otherwise it will be hidden.
                 if (title.includes(query) || category.includes(query)) {
-                    book.style.display = "flex";  // Show matching books
+                    book.style.display = "flex";
                 } else {
-                    book.style.display = "none";  // Hide matching books
+                    book.style.display = "none";
                 }
             });
         }
-
-        function confirmReturn(dueDate, totalPrice) {
-            return confirm(`Your book is due on ${dueDate}. The total price is ${totalPrice} GBP. Do you want to return it?`);
-        }
-
-
-<!--        document.addEventListener("DOMContentLoaded", function () {-->
-<!--            const searchBox = document.getElementById("searchBox");-->
-<!--            const bookEntries = document.querySelectorAll(".book-entry");-->
-
-<!--            searchBox.addEventListener("keyup", function () {-->
-<!--                let query = searchBox.value.toLowerCase();-->
-<!--                bookEntries.forEach(book => {-->
-<!--                    let title = book.getAttribute("data-title").toLowerCase();-->
-<!--                    let category = book.getAttribute("data-category").toLowerCase();-->
-
-<!--                    if (title.includes(query) || category.includes(query)) {-->
-<!--                        book.style.display = "flex";-->
-<!--                    } else {-->
-<!--                        book.style.display = "none";-->
-<!--                    }-->
-<!--                });-->
-<!--            });-->
-<!--        });-->
     </script>
+
 </body>
 </html>

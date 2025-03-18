@@ -1,38 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+{% load static %}
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Balance</title>
+    <meta name="description" content="My Balance | BookSea">
+    <title>My Balance | BookSea</title>
+
+    <!-- Bootstrap & Fonts -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
+        }
+
         body {
-            background: linear-gradient(to right, #FFF6FA, #FFFFFA);
-            color: black;
-            position: relative;
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
             min-height: 100vh;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 20px;
         }
+
+        .top-left-logo {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            width: 180px;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
         .content {
             background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 3rem 4rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        h2 {
-            color: var(--primary);
-            font-size: 2.2rem;
-            margin-bottom: 2rem;
+            max-width: 500px;
+            width: 100%;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
             text-align: center;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
+
         .balance-box {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -42,19 +72,23 @@
             border: 2px solid var(--primary);
             transition: transform 0.2s ease;
         }
+
         .balance-box:hover {
             transform: translateY(-2px);
         }
+
         #balance {
             font-size: 2rem;
             font-weight: 700;
             display: block;
             margin-top: 0.5rem;
         }
+
         form {
             display: grid;
             gap: 1.5rem;
         }
+
         input {
             padding: 1rem;
             border: 2px solid #e0e0e0;
@@ -62,16 +96,19 @@
             font-size: 1rem;
             transition: all 0.3s ease;
         }
+
         input:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(42, 92, 130, 0.2);
         }
+
         button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
             color: white;
             padding: 1rem;
             border: none;
-            border-radius: 8px;
-            background: #5b52e0;
+            border-radius: 10px;
             font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
@@ -79,10 +116,12 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+
         button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(108, 99, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(42, 92, 130, 0.2);
         }
+
         .success-message {
             background: #e8f5e9;
             color: #1b5e20;
@@ -93,23 +132,18 @@
             animation: fadeIn 0.5s ease;
             border: 2px solid #a5d6a7;
         }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        @media (max-width: 480px) {
-            .content {
-                padding: 2rem;
-                border-radius: 0;
-            }
-
-            h2 {
-                font-size: 1.8rem;
-            }
-        }
     </style>
 </head>
 <body>
+
+    <!-- Top Left Logo -->
+    <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
+
     <div class="content">
         <h2>💰 Account Balance</h2>
 
@@ -148,10 +182,8 @@
             const successMessage = document.getElementById("success-message");
 
             if (!isNaN(amount) && amount > 0) {
-                // 显示成功提示
                 successMessage.style.display = 'block';
 
-                // 3秒后淡出提示
                 setTimeout(() => {
                     successMessage.style.opacity = '0';
                     setTimeout(() => {
@@ -160,10 +192,8 @@
                     }, 500);
                 }, 3000);
 
-                // 实际提交表单（根据后端实现可能需要异步处理）
                 this.submit();
             } else {
-                // 错误状态处理
                 amountInput.style.borderColor = '#ef5350';
                 setTimeout(() => {
                     amountInput.style.borderColor = '#e0e0e0';
@@ -171,5 +201,6 @@
             }
         });
     </script>
+
 </body>
 </html>
