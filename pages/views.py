@@ -10,7 +10,7 @@ from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.http import HttpResponse
-from .models import User, Book, LibraryEvent, Support
+from .models import User, Book, LibraryEvent, Support, Announcement
 
 
 def index(request):
@@ -277,4 +277,5 @@ def add_book(request):
     return render(request, 'pages/manager_home.html')
 
 def announcement(request):
-    return render(request, "pages/announcement.html")
+    announcements = Announcement.objects.all().order_by("-created_at")
+    return render(request, "pages/announcement.html", {"announcements": announcements})

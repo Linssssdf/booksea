@@ -26,14 +26,22 @@
 </style>
 
 <body>
-  <div class="container mt-5">
-      <h1>New Features Launched</h1>
-      <div class="alert alert-info">
-          <p><strong>Self-service borrowing and returning book functions.</strong></p>
-          <p>You can now borrow and return books without admin intervention!</p>
-      </div>
-      <button onclick="history.back()" class="btn btn-primary">Back to Home</button>
-  </div>
+
+<div class="container mt-5">
+    <h1>Announcements</h1>
+
+    {% for announcement in announcements %}
+    <div class="alert alert-info">
+        <h4>{{ announcement.title }}</h4>
+        <p>{{ announcement.content }}</p>
+        <small>Published on: {{ announcement.created_at|date:"Y-m-d H:i" }}</small>
+    </div>
+    {% empty %}
+    <p>No announcements available.</p>
+    {% endfor %}
+
+    <button onclick="history.back()" class="btn btn-primary">Back</button>
+</div>
 
 </body>
 </html>

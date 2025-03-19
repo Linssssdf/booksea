@@ -13,7 +13,7 @@ from scripts.regsetup import description
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksea.settings')
 django.setup()
-from pages.models import User, Book, LibraryEvent
+from pages.models import User, Book, LibraryEvent, Announcement
 
 
 class GlasgowLocationProvider(BaseProvider):
@@ -138,6 +138,13 @@ def create_fake_events():
             poster=event.get('poster', None),
             location=event['location']
         )
+def create_announcement():
+    announcements = [
+        {"title": "New Features Launched", "content": "Self-service borrowing and returning book functions. You can now borrow and return books without admin intervention!"},
+    ]
+
+    for ann in announcements:
+        Announcement.objects.get_or_create(title=ann["title"], content=ann["content"])
 
 if __name__ == '__main__':
     if "yes" not in input("This will destroy all data in the database. Are you sure? (yes/no) ").lower():
@@ -152,4 +159,5 @@ if __name__ == '__main__':
     create_users()
     create_fake_books()
     create_fake_events()
+    create_announcement()
     print("Database population completed!")

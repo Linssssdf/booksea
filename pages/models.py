@@ -54,14 +54,6 @@ class User(AbstractBaseUser):
     college = models.CharField(max_length=100, blank=True)
     balance = models.FloatField(null=True)
 
-    @property
-    def is_staff(self):
-        return self.role in [User.UserRole.MANAGER]
-
-    @property
-    def is_superuser(self):
-        return self.role == User.UserRole.MANAGER
-
     def __str__(self):
         return f"{self.username}"
 
@@ -146,3 +138,10 @@ class Support(models.Model):
     def __str__(self):
         return f"Feedback from {self.user.username} - {self.created_at}"
 
+class Announcement(models.Model):
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
