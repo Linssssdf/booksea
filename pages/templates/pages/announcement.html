@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcements | BookSea</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<style>
+        :root {
+            --primary: #2A5C82;
+            --secondary: #E8B48C;
+            --accent: #8EAEBD;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFF9FB 0%, #FEFCF3 100%);
+            color: #2D3436;
+            min-height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            padding: 40px 20px;
+        }
+</style>
+
+<body>
+  <div class="container mt-5">
+      <h1>New Features Launched</h1>
+      <div class="alert alert-info">
+          <p><strong>Self-service borrowing and returning book functions.</strong></p>
+          <p>You can now borrow and return books without admin intervention!</p>
+      </div>
+      <button onclick="history.back()" class="btn btn-primary">Back to Home</button>
+  </div>
+
+</body>
+</html>

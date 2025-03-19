@@ -275,3 +275,6 @@ def add_book(request):
             print(f"Error while adding book: {e}")
 
     return render(request, 'pages/manager_home.html')
+
+def announcement(request):
+    return render(request, "pages/announcement.html")
