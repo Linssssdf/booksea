@@ -84,7 +84,7 @@ class Book(models.Model):
     category = models.CharField(max_length=100)
     index = models.CharField(max_length=50, unique=True)
     is_available = models.BooleanField(default=True)
-    img = models.CharField(max_length=255)
+    img = models.CharField(max_length=255, default="/img/book.jpg")
     rental_price = models.FloatField(null=True)
     borrow_date = models.DateTimeField(null=True, blank=True)
     due_date = models.DateTimeField(null=True, blank=True)

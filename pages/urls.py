@@ -23,5 +23,5 @@ urlpatterns = [
     path('books/<int:book_id>/borrow/', borrow_book, name='borrow_book'),
     path('books/<int:book_id>/return/', return_book, name='return_book'),
     path("home/manager_home/",manager_home, name="manager_home"),
-    path('add-book/', add_book, name='add_book'),
+    path('add_book/', add_book, name='add_book'),
 ]

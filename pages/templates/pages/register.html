@@ -121,15 +121,15 @@
     </style>
     <script>
         function validateForm(event) {
-            var password = document.getElementById("id_password").value;
-            var errorDiv = document.getElementById("password-error");
-            if (password.length < 8) {
-                errorDiv.textContent = "Your password is too short. Please enter at least 8 characters.";
-                event.preventDefault();
-            } else {
-                errorDiv.textContent = "";
-            }
-        }
+             var password = document.getElementById("password").value;
+             var errorDiv = document.getElementById("password-error");
+             if (password.length < 8) {
+                 errorDiv.textContent = "Your password is too short. There is a security risk. Please re-enter it.";
+                 event.preventDefault();
+             } else {
+                 errorDiv.textContent = "";
+             }
+         }
     </script>
 </head>
 <body>
@@ -150,19 +150,30 @@
             {% csrf_token %}
 
             <div class="form-group">
-                <label for="id_username">Username</label>
-                <input type="text" id="id_username" name="username" class="form-control" placeholder="Enter your username" required>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control"
+                       placeholder="Enter your username" required>
             </div>
 
             <div class="form-group">
-                <label for="id_email">Email</label>
-                <input type="email" id="id_email" name="email" class="form-control" placeholder="Enter your email" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" class="form-control"
+                       placeholder="Enter your email" required>
             </div>
 
             <div class="form-group">
-                <label for="id_password">Password</label>
-                <input type="password" id="id_password" name="password" class="form-control" placeholder="Enter your password" required>
-                <div id="password-error" class="error-message"></div>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" class="form-control"
+                       placeholder="Enter your password" required>
+                {% if form.password.errors %}
+                    <div class="errorlist">
+                        {% for error in form.password.errors %}
+                            <p class="text-danger">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div id="password-error" class="text-danger"></div>
             </div>
 
             <button type="submit" class="btn-register">Register</button>

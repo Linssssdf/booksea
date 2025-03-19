@@ -185,7 +185,9 @@
         function confirmBorrow(price) {
             let balance = parseFloat("{{ request.user.balance }}");
             let rentalPrice = parseFloat(price);
-
+            if (isNaN(balance)) {
+                balance = 0;
+            }
             if (balance < rentalPrice) {
                 alert("Insufficient balance. Please top up your account.");
                 return false;  // Prevent form submission

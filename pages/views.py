@@ -81,7 +81,7 @@ def user_register(request):
                user = form.save(commit=False)
                user.set_password(form.cleaned_data['password'])
                user.save()
-               return redirect('/')
+               return redirect('/accounts/login/')
      else:
           form = UserRegistrationForm()
      return render(request, 'pages/register.html', {'form': form})
@@ -253,9 +253,8 @@ def add_book(request):
                 rental_price=request.POST['rental_price'],
                 is_available=True,
             )
-            messages.success(request, 'Book added successfully!')
-            return redirect('add_book')
+            return redirect('manager_home')
         except Exception as e:
-            messages.error(request, f'Error adding book: {str(e)}')
+            print(f"Error while adding book: {e}")
 
     return render(request, 'pages/manager_home.html')
