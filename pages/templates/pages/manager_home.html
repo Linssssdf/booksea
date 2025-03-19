@@ -211,6 +211,33 @@
                 </div>
             </div>
         </div>
+
+        <div class="management-section">
+            <h3>Support Feedback</h3>
+            <table class="loan-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Feedback</th>
+                        <th>Submitted At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feedback in support_messages %}
+                    <tr>
+                        <td>{{ feedback.user.username}}</td>
+                        <td>{{ feedback.support_message }}</td>
+                        <td>{{ feedback.created_at|date:"Y-m-d H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center">No feedback submitted yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
         <div class="management-section">
             <h3>Add New Book</h3>
 

@@ -63,7 +63,7 @@ class User(AbstractBaseUser):
         return self.role == User.UserRole.MANAGER
 
     def __str__(self):
-        return self.username
+        return f"{self.username}"
 
 class Book(models.Model):
     """
@@ -137,4 +137,12 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"Inventory for {self.book.title} - {self.quantity} copies"
+
+class Support(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    support_message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user.username} - {self.created_at}"
 

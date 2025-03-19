@@ -145,12 +145,12 @@
     <img src="{% static '/img/image1.PNG' %}" class="top-left-logo">
 
     <div class="content">
-        <h2>💰 Account Balance</h2>
+        <h2>Account Balance</h2>
 
         <div class="balance-box">
             <div>Current Balance</div>
             <div id="balance">{{ request.user.balance }}</div>
-            <small>USD</small>
+            <small>GBP</small>
         </div>
 
         <div id="success-message" class="success-message">
@@ -164,7 +164,7 @@
                 id="amount"
                 name="amount"
                 step="0.01"
-                placeholder="Enter deposit amount (USD)"
+                placeholder="Enter deposit amount (￡)"
                 min="0"
                 required
             >

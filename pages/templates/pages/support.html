@@ -137,25 +137,25 @@
         </div>
 
         <h3 class="headline" style="font-size: 2rem;">Send Your Feedback</h3>
-        <form id="feedbackForm">
+        <form method="POST" action="{% url 'support' %}" onsubmit="return submitFeedback(event);">
+            {% csrf_token %}
             <div class="form-group">
-                <textarea id="feedback" placeholder="Enter your feedback here..." rows="5"></textarea>
+                <textarea name="support_message" id="feedback" placeholder="Enter your feedback here..." rows="5" required></textarea>
             </div>
             <button type="submit" class="btn-submit">Submit</button>
         </form>
     </div>
 
     <script>
-        document.getElementById("feedbackForm").addEventListener("submit", function(event) {
+        function submitFeedback(event) {
             event.preventDefault();
             const feedback = document.getElementById("feedback").value.trim();
-            if (feedback === "") {
-                alert("Please enter your feedback before submitting.");
-                return;
-            }
+            if (!feedback) return alert("Please enter your feedback before submitting.");
+
             alert("Your feedback has been submitted successfully!");
             document.getElementById("feedback").value = "";
-        });
+            return false;
+        }
     </script>
 
 </body>

@@ -10,7 +10,7 @@ from django import forms
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import validate_email
 from django.http import HttpResponse
-from .models import User, Book, LibraryEvent
+from .models import User, Book, LibraryEvent, Support
 
 
 def index(request):
@@ -120,6 +120,20 @@ def logout(request):
         request.user = AnonymousUser()
 
 def support(request):
+    if request.method == "POST":
+        if request.method == "POST":
+            support_message = request.POST.get("support_message", "").strip()
+
+            if not support_message:
+                return redirect("support")
+
+            Support.objects.create(
+                user=request.user if request.user.is_authenticated else None,
+                support_message=support_message
+            )
+
+            return redirect("support")
+
     return render(request, "pages/support.html")
 
 def news(request):
@@ -238,9 +252,12 @@ def manager_home(request):
         ).count()
     }
 
+    support_messages = Support.objects.all().order_by("-created_at")  # 按时间倒序排列
+
     return render(request, 'pages/manager_home.html', {
         'borrowed_books': borrowed_books,
-        'stats': stats
+        'stats': stats,
+        "support_messages": support_messages
     })
 
 def add_book(request):
