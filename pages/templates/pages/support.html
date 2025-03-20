@@ -137,7 +137,7 @@
         </div>
 
         <h3 class="headline" style="font-size: 2rem;">Send Your Feedback</h3>
-        <form method="POST" action="{% url 'support' %}" onsubmit="return submitFeedback(event);">
+        <form method="POST" action="{% url 'support' %}"  onsubmit="submitFeedback(event);">
             {% csrf_token %}
             <div class="form-group">
                 <textarea name="support_message" id="feedback" placeholder="Enter your feedback here..." rows="5" required></textarea>
@@ -148,13 +148,12 @@
 
     <script>
         function submitFeedback(event) {
-            event.preventDefault();
             const feedback = document.getElementById("feedback").value.trim();
-            if (!feedback) return alert("Please enter your feedback before submitting.");
-
+            if (!feedback) {
+                alert("Please enter your feedback before submitting.");
+                event.preventDefault();
+            }
             alert("Your feedback has been submitted successfully!");
-            document.getElementById("feedback").value = "";
-            return false;
         }
     </script>
 

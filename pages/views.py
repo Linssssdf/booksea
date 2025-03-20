@@ -120,18 +120,17 @@ def logout(request):
 
 def support(request):
     if request.method == "POST":
-        if request.method == "POST":
-            support_message = request.POST.get("support_message", "").strip()
+        support_message = request.POST.get("support_message", "").strip()
 
-            if not support_message:
-                return redirect("support")
-
-            Support.objects.create(
-                user=request.user if request.user.is_authenticated else None,
-                support_message=support_message
-            )
-
+        if not support_message:
             return redirect("support")
+
+        Support.objects.create(
+            user=request.user if request.user.is_authenticated else None,
+            support_message=support_message
+        )
+
+        return redirect("support")
 
     return render(request, "pages/support.html")
 
