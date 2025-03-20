@@ -5,7 +5,7 @@ from pages.views import index, PasswordResetView, user_register, user_login, sig
     account_setting, borrow_book, return_book, balance, order, manager_home, add_book, announcement
 
 urlpatterns = [
-    path("", index),
+    path("", index, name="index"),
     path("accounts/password_reset/", PasswordResetView.as_view(), name="password_reset"),
     path("accounts/password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("accounts/reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),

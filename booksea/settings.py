@@ -24,7 +24,7 @@ SECRET_KEY = '_r+pl)kzm%e!0fnp#xu&ow+$gc^_8+=l2ql%7q-dm#cphlq59_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['booksea.pythonanywhere.com']
 
 
 # Application definition
@@ -77,6 +77,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'bruceKa$booksea',
+        # 'USER': 'bruceKa',
+        # 'PASSWORD': 'lskkiioo',
+        # 'HOST': 'bruceKa.mysql.pythonanywhere-services.com',
+        # 'PORT': '3306',
     }
 }
 
@@ -119,5 +125,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

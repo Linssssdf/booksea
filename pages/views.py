@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 from django.utils import timezone
 
 from django.contrib import messages
@@ -192,8 +192,8 @@ def borrow_book(request, book_id):
                 user.save()
                 # Update book status
                 book.is_available = False
-                book.borrow_date = datetime.now()
-                book.due_date = datetime.now() + timedelta(days=7)
+                book.borrow_date = timezone.now()
+                book.due_date = timezone.now() + timedelta(days=7)
                 book.borrower = user
                 book.save()
 
@@ -235,9 +235,7 @@ def return_book(request, book_id):
     return redirect('order')
 
 def manager_home(request):
-    borrowed_books = Book.objects.filter(
-        is_available=False
-    ).select_related('borrower')
+    borrowed_books = Book.objects.filter(is_available=False).select_related('borrower')
 
     for book in borrowed_books:
         if book.due_date:
@@ -247,7 +245,7 @@ def manager_home(request):
         'total_books': Book.objects.count(),
         'available_books': Book.objects.filter(is_available=True).count(),
         'overdue_books': Book.objects.filter(
-            is_overdue=book.is_overdue,
+            is_overdue=True,
             is_available=False
         ).count()
     }
@@ -257,7 +255,7 @@ def manager_home(request):
     return render(request, 'pages/manager_home.html', {
         'borrowed_books': borrowed_books,
         'stats': stats,
-        "support_messages": support_messages
+        'support_messages': support_messages
     })
 
 def add_book(request):

@@ -8,8 +8,6 @@ from faker import Faker
 from faker.providers import BaseProvider
 import random
 
-from scripts.regsetup import description
-
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'booksea.settings')
 django.setup()
