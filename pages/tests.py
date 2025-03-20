@@ -19,7 +19,7 @@ class LibraryViewsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'pages/index.html')
 
-    def test_home_view_redirect_if_not_logged_in(self):
+    def test_home_view_redirect_log_out(self):
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('login'))
 
@@ -32,6 +32,17 @@ class LibraryViewsTest(TestCase):
         self.client.login(username='admin', password='admin123')
         response = self.client.get(reverse('home'))
         self.assertRedirects(response, reverse('manager_home'))
+
+    def test_add_book_as_manager(self):
+        self.client.login(username='admin', password='admin123')
+        response = self.client.post(reverse('add_book'), {
+            'title': 'New Book',
+            'category': 'Science',
+            'index': '5678',
+            'rental_price': '15.0',
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Book.objects.filter(title='New Book').exists())
 
     def test_user_registration(self):
         response = self.client.post(reverse('register'), {
